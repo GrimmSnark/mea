@@ -1,5 +1,6 @@
 function ops = retinaWavesDefaults()
 % This function holds all the defaults for processing Brainwave data
+% Written by MA Savage 28102022
 
 %% findAllBursts
 

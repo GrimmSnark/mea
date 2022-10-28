@@ -60,5 +60,5 @@ if ~isempty(varargin)
 end
 
 % run cat stats
-catAndStatOnWaves(waveFile, 1500, 0.2, varargin{:});
+catAndStatOnWaves(waveFile, waveFile.ops.binSize, waveFile.ops.timeStep, varargin{:});
 end
