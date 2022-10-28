@@ -25,21 +25,27 @@ if contains(datFile,'.bxr')
     bxrFlag = 1;
 end
 
-% find waveStruct file
+% get path parts
 [path] = fileparts(datFile);
-
-waveStructFile = dir(fullfile(path, '*waveE*.mat'));
-waveFile = fullfile(waveStructFile.folder, waveStructFile.name);
 
 %% extract bursts
 % deal with .bxr or SpkTs.mat
 if bxrFlag == 1
+
+    waveStructFile = dir(fullfile(path, '*waveE*.mat'));
+    waveFile = fullfile(waveStructFile.folder, waveStructFile.name);
+
     findAllBurstsAPS(waveFile, varargin{:});
 else
     findAllBurstsAPS(datFile, varargin{:});
 end
 
 %% wave analysis
+
+% get wavefile after it is certain it is generated
+waveStructFile = dir(fullfile(path, '*waveE*.mat'));
+waveFile = fullfile(waveStructFile.folder, waveStructFile.name);
+
 % run analyse waves
 analyseWavesAPS_Stats(waveFile, varargin{:});
 
@@ -60,5 +66,5 @@ if ~isempty(varargin)
 end
 
 % run cat stats
-catAndStatOnWaves(waveFile, waveFile.ops.binSize, waveFile.ops.timeStep, varargin{:});
+catAndStatOnWaves(waveFile, waveEx.ops.binSize, waveEx.ops.timeStep, varargin{:});
 end

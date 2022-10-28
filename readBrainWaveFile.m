@@ -30,6 +30,9 @@ spikeChData = h5read(filePath, '/3BResults/3BChEvents/SpikeChIDs');
 % read in default options
 ops = retinaWavesDefaults;
 
+% overwrite sampling freq
+ops.freq = SamplingFrequency;
+
 %% create struct
 
 % create all the channels
