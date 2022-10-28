@@ -1,4 +1,4 @@
-function createHotMaps(datFile)
+function createHotMaps(datFile, wave2Use)
 % Function creates hotmaps and outlines retinal waves. Basically a
 % translation of the alpha_shapes.R script by Stephen J. Eglen
 %
@@ -9,17 +9,28 @@ function createHotMaps(datFile)
 %
 
 %% load file
+
+[path, name, ext] = fileparts(datFile);
+filepathStruct = fullfile(path,name); % filename for save structure
+
 if contains(datFile,'hotMaps')
     load(datFile);
     overallHotMap2 = fliplr(overallHotMap); % flip needed to match existing figures?? 
     indxOverallHot = find(overallHotMap2);
 
+    % root filepath for saving figures
+    rootFilepathInd = strfind(filepathStruct, '_hotMaps');
 elseif contains(datFile,'waveEx')
     load(datFile);
     overallHotMap2 = waveEx.hotMaps.overallHotMap;
     indxOverallHot = find(overallHotMap2);
 
+    rootFilepathInd = strfind(filepathStruct, '_wave');
 end
+
+% get the root file name
+rootFilepath = datFile(1:rootFilepathInd-1);
+
 
 %% get active electrode coordinates
 [elecCoor(:,1), elecCoor(:,2)]  = ind2sub([64 64],indxOverallHot);
@@ -27,8 +38,8 @@ end
 % create electrode colour mat
 electrodeRGB = repmat([0.6 0.6 0.6], length(elecCoor),1);
 
-% wave2Use = 54;
-wave2Use = 11;
+%  wave2Use = 52;
+% % wave2Use = 11;
 
 % active chans
 if contains(datFile,'hotMaps')
@@ -62,7 +73,8 @@ xlim([-1 65]);
 wavePoly  = concaveBoundary(elecCoorWave(:,1), elecCoorWave(:,2), 0.1);
 
 % get the area of the polygon
-ployA = polyarea(wavePoly.Vertices(:,1), wavePoly.Vertices(:,2));
+% ployA = polyarea(wavePoly.Vertices(:,1), wavePoly.Vertices(:,2));
+ployA = area(wavePoly);
 
 %% plotting 
 
@@ -87,6 +99,11 @@ scatter(elecCoorWave(:,1),elecCoorWave(:,2),[] ,electrodeActiveRGB, "filled");
 title(sprintf('W %i: d = %i/%i = %.2f; a = %4.1f', wave2Use, length(indxhotMap2Use), ...
     length(inWaveFlag) , length(indxhotMap2Use)/length(inWaveFlag), ployA ));
 
+ tightfig;
+
 %% saving 
+
+exportgraphics(figH,[rootFilepath,'_hotMaps_alpha.eps'], "Resolution",300, 'ContentType','vector');
+exportgraphics(figH,[rootFilepath,'_hotMaps_alpha.png'], "Resolution",300);
 end
 

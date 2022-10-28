@@ -59,11 +59,17 @@ y2 = radius * sind(theta) + yCenter;
 % limit to the arc required
 plotX= ([x2(stopIn:startIn)]);
 plotY= ([y2(stopIn:startIn)]);
+% plotX= ([x(end) x2(stopIn:startIn) x(1)]);
+% plotY= ([y(end) y2(stopIn:startIn) y(1)]);
+
 
 % if the line is not feasible in that direction, try reversing
 if isempty(plotX)
-    plotX= ([ x2(stopIn:end) x2(1:startIn)]);
+    plotX= ([x2(stopIn:end) x2(1:startIn)]);
     plotY= ([y2(stopIn:end) y2(1:startIn)]);
+%     plotX= ([x(end) x2(stopIn:end) x2(1:startIn) x(1)]);
+%     plotY= ([x(end) y2(stopIn:end) y2(1:startIn) x(1)]);
+
 
     %     plot(plotX, plotY, 'b-', 'LineWidth', 2.5);
 else

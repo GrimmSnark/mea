@@ -48,15 +48,18 @@ for i =1:length(boundaryCoorsX)-1
     % fit curve
     [arcShapeX,  arcShapeY]= circleArcfit(curveX, curveY);
 
+%     plot(arcShapeX, arcShapeY);
+
     % add to waveShape
     waveShapeX = [waveShapeX arcShapeX];
     waveShapeY = [waveShapeY arcShapeY];
 end
 
 % sort the points by euclidean distance
-[waveXSorted, waveYSorted] = euclideanSortCoordinates(shapeX, shapeY);
+[waveXSorted, waveYSorted] = euclideanSortCoordinates(waveShapeX, waveShapeY);
 
 % create polygon from the wave boundaries
 % NB we remove the last 6 point to stop a weird polygon line draw bug
-wavePoly = polyshape(waveXSorted(1:end-6), waveYSorted(1:end-6), 'Simplify', true);
+removeNum = 10;
+wavePoly = polyshape(waveXSorted(1:end-removeNum), waveYSorted(1:end-removeNum), 'Simplify', true);
 end
