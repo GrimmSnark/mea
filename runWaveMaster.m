@@ -5,7 +5,8 @@ function runWaveMaster(datFile, varargin)
 % Written by MA Savage 27102022
 %
 % Inputs: datFile- fullfile to the data file to process, can be a .bxr or a
-%                  SpkTs.mat file
+%                  SpkTs.mat file. If you leave this empty '[]', then opens
+%                  the file dialogue
 %
 %         varargin - can overwrite any input variable to the analysis files
 %                    with the 'parameter name', variable format
@@ -18,6 +19,18 @@ function runWaveMaster(datFile, varargin)
 
 bxrFlag = 0; % flag for bxr file type
 %% read data
+
+% if the dataFile is empty, open file dialogue
+if isempty(datFile)
+    [file,path] = uigetfile;
+
+    % if you did not select a file
+    if file == 0
+        error('User has not selected a file to process, please rerun and do so....')
+    else
+        datFile = fullfile(path, file);
+    end
+end
 
 % if bxr file
 if contains(datFile,'.bxr')
@@ -32,11 +45,14 @@ end
 % deal with .bxr or SpkTs.mat
 if bxrFlag == 1
 
+    % get waveEx.mat file if calculated by readBrainWaveFile
     waveStructFile = dir(fullfile(path, '*waveE*.mat'));
     waveFile = fullfile(waveStructFile.folder, waveStructFile.name);
 
     findAllBurstsAPS(waveFile, varargin{:});
 else
+
+    % otherwise use SpkTs.mat
     findAllBurstsAPS(datFile, varargin{:});
 end
 
@@ -58,9 +74,9 @@ load(waveFile);
 if ~isempty(varargin)
     for xx = 1:size(varargin,1)
         try
-            eval(['ops.' varargin{xx,1} '=' num2str(varargin{xx,2}) ';'])
+            eval(['ops.' varargin{xx,1} '=' num2str(varargin{xx,2}) ';']);
         catch
-            eval(['ops.' varargin{xx,1} '=' varargin{xx,2} ';'])
+            eval(['ops.' varargin{xx,1} '=' varargin{xx,2} ';']);
         end
     end
 end

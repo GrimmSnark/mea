@@ -323,7 +323,7 @@ waveStats.waveSpeed = waveSpeed;
 
 waveEx.waveStats = waveStats;
 
-save([rootFilepath '_hotMaps.mat'], 'hotMaps', 'overallHotMap');
+% save([rootFilepath '_hotMaps.mat'], 'hotMaps', 'overallHotMap');
 
 waveEx.hotMaps.hotMaps = hotMaps;
 waveEx.hotMaps.overallHotMap = overallHotMap;
