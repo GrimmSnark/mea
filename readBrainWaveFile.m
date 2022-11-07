@@ -11,8 +11,10 @@ function readBrainWaveFile(filePath)
 
 %% read in data
 % read in chan org
+% info = h5info(filePath);
 nCols =  h5read(filePath,'/3BRecInfo/3BMeaChip/NCols');
 nRows =  h5read(filePath,'/3BRecInfo/3BMeaChip/NRows');
+% layout = h5read(filePath,'/3BRecInfo/3BMeaChip/MeaType');
 
 % read in frame num
 StartFrame = 0;

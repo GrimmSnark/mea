@@ -1,5 +1,5 @@
 function [wavePoly, waveShapeX, waveShapeY] = concaveBoundary(coorX, coorY,scaleFactor)
-% Creates a concave boundar around cloud of points. Similar to the alpha 
+% Creates a concave boundar around cloud of points. Similar to the alpha
 % hull alpha_shapes.R script by Stephen J. Eglen
 %
 % Written by MA Savage 28102022
@@ -27,7 +27,8 @@ for i =1:length(boundaryCoorsX)-1
 
     % get mid point
     midPoint = [(boundaryCoorsX(i) + boundaryCoorsX(i+1))/2 (boundaryCoorsY(i) + boundaryCoorsY(i+1))/2];
-    %     scatter(midPoint(1), midPoint(2), 'b')
+    %          scatter(midPoint(1), midPoint(2), 'b');
+    %          hold on
 
     % get line distance
     distLine = pdist([boundaryCoorsY(i) boundaryCoorsX(i); boundaryCoorsY(i+1) boundaryCoorsX(i+1)]);
@@ -48,7 +49,7 @@ for i =1:length(boundaryCoorsX)-1
     % fit curve
     [arcShapeX,  arcShapeY]= circleArcfit(curveX, curveY);
 
-%     plot(arcShapeX, arcShapeY);
+    %     plot(arcShapeX, arcShapeY);
 
     % add to waveShape
     waveShapeX = [waveShapeX arcShapeX];

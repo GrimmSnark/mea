@@ -8,6 +8,12 @@ function createHotMaps(datFile, wave2Use)
 %                  _waveEx.mat or a hotMaps.mat file
 %
 
+%% defaults
+
+if nargin < 2 || isempty(wave2Use)
+    wave2Use = [];
+end
+
 %% load file
 
 [path, name, ext] = fileparts(datFile);
@@ -32,34 +38,83 @@ end
 rootFilepath = datFile(1:rootFilepathInd-1);
 
 
-%% get active electrode coordinates
-[elecCoor(:,1), elecCoor(:,2)]  = ind2sub([64 64],indxOverallHot);
+%% Run through all the waves
+
+% get hotmaps
+if contains(datFile,'hotMaps')
+    hotMaps = cellfun(@(x) fliplr(x), hotMaps, 'UniformOutput',false ); % flip needed to match existing figures??
+elseif contains(datFile,'waveEx')
+   hotMaps = waveEx.hotMaps.hotMaps;
+end
+
+if isempty(wave2Use)
+    hotMaps2Plot = 1:length(hotMaps);
+    plottingAll = 1;
+elseif isnumeric(wave2Use)
+    hotMaps2Plot = wave2Use;
+    plottingAll = 0;
+end
+
+%% get the hotmap stats for excel
+for xx = 1:length(hotMaps)
+
+    % get active electrode coordinates
+    [elecCoor(:,1), elecCoor(:,2)]  = ind2sub([64 64],indxOverallHot);
+
+    currentHotmap = hotMaps{xx};
+
+    % get active chan coordinates
+    indxhotMap2Use = find(currentHotmap);
+    [elecCoorWave{xx}(:,1), elecCoorWave{xx}(:,2)]  = ind2sub([64 64],indxhotMap2Use);
+
+    % get wave polygon
+    wavePoly{xx}  = concaveBoundary(elecCoorWave{xx}(:,1), elecCoorWave{xx}(:,2), 0.1);
+
+    % get area
+    ployA = area(wavePoly{xx});
+
+    inWaveFlag{xx} = find(inpolygon(elecCoor(:,1),elecCoor(:,2),wavePoly{xx}.Vertices(:,1), wavePoly{xx}.Vertices(:,2)));
+
+    % fill table
+    wave(xx) = xx;	
+    areaPoly(xx) = 	ployA;
+    n.active(xx) = length(indxhotMap2Use);	
+    n.inside(xx) = length(inWaveFlag{xx});	
+    density(xx) = n.active(xx)/n.inside(xx);
+end
+
+% create table 
+statsTab = table(wave',areaPoly', n.active', n.inside', density' );
+
+% save table
+writetable(statsTab, [rootFilepath,'_hotMaps_alphaMS.csv'] )
+
+%% plotting
+
+numFigs = ceil(length(hotMaps2Plot)/18);
+% get subplot index for each session
+waveSubIn = reshape(1:numFigs*18, 18,[] );
+waveSubIn(waveSubIn > length(hotMaps2Plot)) = 0;
+
+figCount = waveSubIn(1,:);
+figCurr = 1;
+for qq = hotMaps2Plot
+
+    % deal with figure creation
+    if sum(figCount==qq) > 0
+        figH(figCurr) =  figure('units','normalized','outerposition',[0 0 0.5 1]);
+        tiledlayout(figH(figCurr),6,3, "Padding","tight", TileSpacing="tight");
+        figCurr = figCurr+1;
+        
+    end
 
 % create electrode colour mat
 electrodeRGB = repmat([0.6 0.6 0.6], length(elecCoor),1);
 
-%  wave2Use = 52;
-% % wave2Use = 11;
-
 % active chans
-if contains(datFile,'hotMaps')
-    hotMap2Use = fliplr(hotMaps{wave2Use}); % flip needed to match existing figures?? 
+electrodeActiveRGB = repmat([0 1 0], length(elecCoorWave{qq}),1);
 
-elseif contains(datFile,'waveEx')
-   hotMap2Use = waveEx.hotMaps.hotMaps{wave2Use};
-
-end
-
-% get active chan coordinates and RGB matrix
-indxhotMap2Use = find(hotMap2Use);
-[elecCoorWave(:,1), elecCoorWave(:,2)]  = ind2sub([64 64],indxhotMap2Use);
-electrodeActiveRGB = repmat([0 1 0], length(elecCoorWave),1);
-
-%% Figure creation
-
-figH = figure();
-figH.WindowState = 'maximized';
-hold on
+nexttile
 
 % draw MEA box
 rectangle("Position",[0 1 64 64], "LineStyle","--");
@@ -68,42 +123,34 @@ rectangle("Position",[0 1 64 64], "LineStyle","--");
 axis square
 ylim([-1 65]);
 xlim([-1 65]);
-
-% get concave wave boundary (basically better alpha hull)
-wavePoly  = concaveBoundary(elecCoorWave(:,1), elecCoorWave(:,2), 0.1);
-
-% get the area of the polygon
-% ployA = polyarea(wavePoly.Vertices(:,1), wavePoly.Vertices(:,2));
-ployA = area(wavePoly);
+hold on
 
 %% plotting 
+pointSize = 1.5;
 
 % plot the wave
-plot(wavePoly, "LineWidth",2.5, "EdgeColor", 'k','FaceColor','none');
+plot(wavePoly{qq}, "LineWidth",2, "EdgeColor", 'k','FaceColor','none');
 
-% plot electrode dots
-% get which electrodes are inside the wave
-inWaveFlag = find(inpolygon(elecCoor(:,1),elecCoor(:,2),wavePoly.Vertices(:,1), wavePoly.Vertices(:,2)));
-
-% set them to black
-electrodeRGB(inWaveFlag,:) = repmat([0 0 0], length(inWaveFlag),1);
+% set in wave electrodes to black
+electrodeRGB(inWaveFlag{qq},:) = repmat([0 0 0], length(inWaveFlag{qq}),1);
 
 % plot all the electrode
-scatter(elecCoor(:,1),elecCoor(:,2),[] ,electrodeRGB, "filled");
+scatter(elecCoor(:,1),elecCoor(:,2),pointSize ,electrodeRGB, "filled");
 
 
 % plot active electode dots
-scatter(elecCoorWave(:,1),elecCoorWave(:,2),[] ,electrodeActiveRGB, "filled");
+scatter(elecCoorWave{qq}(:,1), elecCoorWave{qq}(:,2),pointSize ,electrodeActiveRGB, "filled");
 
 % add the title info
-title(sprintf('W %i: d = %i/%i = %.2f; a = %4.1f', wave2Use, length(indxhotMap2Use), ...
-    length(inWaveFlag) , length(indxhotMap2Use)/length(inWaveFlag), ployA ));
+title(sprintf('W %i: d = %i/%i = %.2f; a = %4.1f', qq, n.active(qq), ...
+    n.inside(qq) , density(qq), areaPoly(qq) ));
 
- tightfig;
+end
 
 %% saving 
+exportgraphics(figH(1),[rootFilepath,'_hotMaps_alphaMS.pdf'], "Resolution",300, 'ContentType','vector');
 
-exportgraphics(figH,[rootFilepath,'_hotMaps_alpha.eps'], "Resolution",300, 'ContentType','vector');
-exportgraphics(figH,[rootFilepath,'_hotMaps_alpha.png'], "Resolution",300);
+for cc = 2:numFigs
+    exportgraphics(figH(cc),[rootFilepath,'_hotMaps_alphaMS.pdf'], "Resolution",300, 'ContentType','vector', "Append", true);
 end
 
