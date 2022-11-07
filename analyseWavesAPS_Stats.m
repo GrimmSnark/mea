@@ -129,11 +129,15 @@ ynplots = 3;
 
 % deal with varargin overrides
 if ~isempty(varargin)
-    for xx = 1:size(varargin,1)
-        try
-            eval(['ops.' varargin{xx,1} '=' num2str(varargin{xx,2}) ';']);
-        catch
+    varargin = reshape(varargin,2,  [])';
+
+    for xx = 1:size(varargin, 1)
+        if isstring(varargin{xx,2})
             eval(['ops.' varargin{xx,1} '=' varargin{xx,2} ';']);
+        elseif isnumeric(varargin{xx,2}) && length(varargin{xx,2}) == 1
+            eval(['ops.' varargin{xx,1} '=' num2str(varargin{xx,2}) ';']);
+        elseif isnumeric(varargin{xx,2}) && length(varargin{xx,2}) > 1
+            eval(['ops.' varargin{xx,1} '= [' num2str(varargin{xx,2}(:)') '];']);
         end
     end
 end
