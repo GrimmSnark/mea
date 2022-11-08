@@ -333,6 +333,8 @@ waveEx.hotMaps.hotMaps = hotMaps;
 waveEx.hotMaps.overallHotMap = overallHotMap;
 
 save([filepathStruct '.mat'], 'waveEx');
+
+close all
 end
 
 function a = WaveAreaConvexHull(chs)

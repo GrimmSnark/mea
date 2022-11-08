@@ -970,5 +970,6 @@ else
     fprintf('...done\n');
 end
 
+close all
 clear
 return
