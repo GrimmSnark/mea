@@ -830,6 +830,8 @@ if ops.show36 == 1
         % dot not save postscript - files are too large
         %print(h2,'-dpsc2','-r300',[file,'_30waves.ps'])
 
+        exportgraphics(h2,[rootFilepath,'_waves36.eps'], "Resolution",300, 'ContentType','vector');
+
         % %% much faster way to save png
         dpm = fix((300/2.54) * 100);% 300DPI = dpm Dots Per Meter
 
