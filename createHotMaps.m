@@ -91,9 +91,9 @@ writetable(statsTab, [rootFilepath,'_hotMaps_alphaMS.csv'] )
 
 %% plotting
 
-numFigs = ceil(length(hotMaps2Plot)/18);
+numFigs = ceil(length(hotMaps2Plot)/6);
 % get subplot index for each session
-waveSubIn = reshape(1:numFigs*18, 18,[] );
+waveSubIn = reshape(1:numFigs*6, 6,[] );
 waveSubIn(waveSubIn > length(hotMaps2Plot)) = 0;
 
 figCount = waveSubIn(1,:);
@@ -103,7 +103,7 @@ for qq = hotMaps2Plot
     % deal with figure creation
     if sum(figCount==qq) > 0
         figH(figCurr) =  figure('units','normalized','outerposition',[0 0 0.5 1]);
-        tiledlayout(figH(figCurr),6,3, "Padding","tight", TileSpacing="tight");
+        tiledlayout(figH(figCurr),3,2, "Padding","tight", TileSpacing="tight");
         figCurr = figCurr+1;
         
     end
@@ -126,10 +126,10 @@ xlim([-1 65]);
 hold on
 
 %% plotting 
-pointSize = 1.5;
+pointSize = 5;
 
 % plot the wave
-plot(wavePoly{qq}, "LineWidth",2, "EdgeColor", 'k','FaceColor','none');
+plot(wavePoly{qq}, "LineWidth",2.5, "EdgeColor", 'k','FaceColor','none');
 
 % set in wave electrodes to black
 electrodeRGB(inWaveFlag{qq},:) = repmat([0 0 0], length(inWaveFlag{qq}),1);
