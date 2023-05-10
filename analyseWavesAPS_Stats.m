@@ -779,7 +779,7 @@ if ops.show36 == 1
         col = [0.8 0.8 0.8];
         col = [1 1 1];
         %col = [0 0 0];
-        for enum = bursts.testelecs %elecs,
+        for enum = 1:length(bursts.testelecs) %elecs,
             phandle(enum) = patch([bursts.epos(enum,1) bursts.epos(enum,1)+1 bursts.epos(enum,1)+1 bursts.epos(enum,1)], [bursts.epos(enum,2) bursts.epos(enum,2) bursts.epos(enum,2)+1 bursts.epos(enum,2)+1], [0 0 0 0]);
             set(phandle(enum),'FaceColor',col,'EdgeColor','none')
         end
@@ -900,7 +900,7 @@ movie_ms = 4;  % marker size
 
 fill([1 1 66 66],[1 66 66 1],[0.5 0.5 0.5])
 hold on
-for enum = bursts.testelecs
+for enum = 1:length(bursts.testelecs)
     col(enum,:) = [0 0 0];
     phandle(enum) = patch([bursts.epos(enum,1) bursts.epos(enum,1)+1 bursts.epos(enum,1)+1 bursts.epos(enum,1)], [bursts.epos(enum,2) bursts.epos(enum,2) bursts.epos(enum,2)+1 bursts.epos(enum,2)+1], [0 0 0 0]);
     set(phandle(enum),'FaceColor',col(enum,:),'EdgeColor','none')

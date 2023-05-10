@@ -20,14 +20,26 @@ nRows =  h5read(filePath,'/3BRecInfo/3BMeaChip/NRows');
 StartFrame = 0;
 StopFrame = h5read(filePath,'/3BRecInfo/3BRecVars/NRecFrames');
 
+StartFrame = StartFrame + 1; % bump up to 1 indexing
+StopFrame = StopFrame + 1; % bump up to 1 indexing
+
 % read in sample freq
 SamplingFrequency = h5read(filePath, '/3BRecInfo/3BRecVars/SamplingRate');
 
+% SamplingFrequency = h5readatt(filePath, '/' ,'SamplingRate');
+
+
 % read in spike times (in frames)
 spikeT = h5read(filePath, '/3BResults/3BChEvents/SpikeTimes');
+spikeT = spikeT +1; % bump up to 1 indexing
+
+% spikeT = h5read(filePath, '/Well_A1/SpikeTimes');
 
 % read in spike chan indexes
 spikeChData = h5read(filePath, '/3BResults/3BChEvents/SpikeChIDs');
+
+% spikeChData = h5read(filePath, '/Well_A1/SpikeChIdxs');
+
 
 % read in default options
 ops = retinaWavesDefaults;

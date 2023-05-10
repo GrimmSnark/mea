@@ -125,7 +125,7 @@ rectime = max(maxt(elecs));
 ee = elecs;
 testelecs = ee;
 
-
+%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % calculate Spike Rate and ISI Ranks
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -228,6 +228,51 @@ for enum = ee,
   end
 
 end
+
+
+%% Check for row saturation ie lines of activity across the entire chip,
+% this is seen in a few recordings where the chip/system has bad contact
+% M Savage 20230905
+
+meaArr = nan(64,64);
+
+for ch = 1:max_elec_no
+   meaArr(epos(ch,1),epos(ch,2))=meanrate(ch);
+end
+
+% get median for all channels used in the chip
+meaArrMedian = median(meaArr, 'omitnan');
+medianSD = std(meaArrMedian);
+
+% create activity threshold as 3 STDs above the mean of the median
+activtyLim = (3*medianSD) + mean(meaArrMedian);
+
+
+rows2Clean = find(meaArrMedian>activtyLim);
+
+% find the indexes of the channels to delete
+channels2Keep = ~ismember(epos(:,2),rows2Clean);
+channels2Kill = ismember(epos(:,2),rows2Clean);
+
+% clean per channel
+rate(channels2Kill) = [];
+testelecs(channels2Kill) = [];
+epos(channels2Kill,:) = [];
+meanrate(channels2Kill) = [];
+nspikes(channels2Kill) = [];
+wlen(channels2Kill) = [];
+wskip(channels2Kill) = [];
+spikes.times(channels2Kill) = [];
+
+
+% clean stuff that only goes until last valid index,ie can be shorter than
+% channeels2Kill
+bursttime(channels2Kill(1:length(bursttime))) = [];
+burstend(channels2Kill(1:length(burstend))) = [];
+burstdur(channels2Kill(1:length(burstdur))) = [];
+burstsize(channels2Kill(1:length(burstsize))) = [];
+
+% scount(channels2Kill) = [];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% save the data

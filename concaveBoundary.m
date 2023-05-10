@@ -62,5 +62,7 @@ end
 % create polygon from the wave boundaries
 % NB we remove the last 6 point to stop a weird polygon line draw bug
 removeNum = 10;
-wavePoly = polyshape(waveXSorted(1:end-removeNum), waveYSorted(1:end-removeNum), 'Simplify', true);
+warning('off');
+wavePoly = polyshape(waveXSorted(1:end-removeNum), waveYSorted(1:end-removeNum), 'Simplify', true); 
+warning('on');
 end

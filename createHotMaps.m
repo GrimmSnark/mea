@@ -150,7 +150,21 @@ end
 %% saving 
 exportgraphics(figH(1),[rootFilepath,'_hotMaps_alphaMS.pdf'], "Resolution",300, 'ContentType','vector');
 
-for cc = 2:numFigs
-    exportgraphics(figH(cc),[rootFilepath,'_hotMaps_alphaMS.pdf'], "Resolution",300, 'ContentType','vector', "Append", true);
+% try using the new version to make multipage pdf files
+try
+    for cc = 2:numFigs
+        exportgraphics(figH(cc),[rootFilepath,'_hotMaps_alphaMS.pdf'], "Resolution",300, 'ContentType','vector', "Append", true);
+    end
+catch  % use old version of pdf appending
+    
+    fileNames{1} = [rootFilepath,'_hotMaps_alphaMS.pdf'];
+    for cc = 2:numFigs
+        exportgraphics(figH(cc),[rootFilepath,'_hotMaps_alphaMS_' num2str(cc) '.pdf'], "Resolution",300, 'ContentType','vector');
+        fileNames{cc} = [rootFilepath,'_hotMaps_alphaMS_' num2str(cc) '.pdf'];
+    end
+
+    mergePdfs(fileNames,  [rootFilepath,'_hotMaps_alphaMS.pdf']);
+    delete(fileNames{2:end});
 end
 
+end
