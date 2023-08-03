@@ -250,27 +250,32 @@ activtyLim = (3*medianSD) + mean(meaArrMedian);
 
 rows2Clean = find(meaArrMedian>activtyLim);
 
-% find the indexes of the channels to delete
-channels2Keep = ~ismember(epos(:,2),rows2Clean);
-channels2Kill = ismember(epos(:,2),rows2Clean);
+if ~isempty(rows2Clean)
 
-% clean per channel
-rate(channels2Kill) = [];
-testelecs(channels2Kill) = [];
-epos(channels2Kill,:) = [];
-meanrate(channels2Kill) = [];
-nspikes(channels2Kill) = [];
-wlen(channels2Kill) = [];
-wskip(channels2Kill) = [];
-spikes.times(channels2Kill) = [];
+    disp(['Removing electrode row(s): ' num2str(rows2Clean(:)) ' due to high noise, please check output!!!']);
+
+    % find the indexes of the channels to delete
+    channels2Keep = ~ismember(epos(:,2),rows2Clean);
+    channels2Kill = ismember(epos(:,2),rows2Clean);
+
+    % clean per channel
+    rate(channels2Kill) = [];
+    testelecs(channels2Kill) = [];
+    epos(channels2Kill,:) = [];
+    meanrate(channels2Kill) = [];
+    nspikes(channels2Kill) = [];
+    wlen(channels2Kill) = [];
+    wskip(channels2Kill) = [];
+    spikes.times(channels2Kill) = [];
 
 
-% clean stuff that only goes until last valid index,ie can be shorter than
-% channeels2Kill
-bursttime(channels2Kill(1:length(bursttime))) = [];
-burstend(channels2Kill(1:length(burstend))) = [];
-burstdur(channels2Kill(1:length(burstdur))) = [];
-burstsize(channels2Kill(1:length(burstsize))) = [];
+    % clean stuff that only goes until last valid index,ie can be shorter than
+    % channeels2Kill
+    bursttime(channels2Kill(1:length(bursttime))) = [];
+    burstend(channels2Kill(1:length(burstend))) = [];
+    burstdur(channels2Kill(1:length(burstdur))) = [];
+    burstsize(channels2Kill(1:length(burstsize))) = [];
+end
 
 % scount(channels2Kill) = [];
 

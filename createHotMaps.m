@@ -5,13 +5,27 @@ function createHotMaps(datFile, wave2Use)
 % Written by MA Savage 28102022
 %
 % Inputs: datFile- fullfile to the data file to process, can be a
-%                  _waveEx.mat or a hotMaps.mat file
+%                  _waveEx.mat or a hotMaps.mat file. If you leave this 
+%                  empty '[]', then opens the file dialogue
 %
+%        wave2Use- vector of waves to plot OR empty to plot all waves
 
 %% defaults
 
 if nargin < 2 || isempty(wave2Use)
     wave2Use = [];
+end
+
+% if the dataFile is empty, open file dialogue
+if isempty(datFile)
+    [file,path] = uigetfile;
+
+    % if you did not select a file
+    if file == 0
+        error('User has not selected a file to process, please rerun and do so....')
+    else
+        datFile = fullfile(path, file);
+    end
 end
 
 %% load file
@@ -85,6 +99,7 @@ end
 
 % create table 
 statsTab = table(wave',areaPoly', n.active', n.inside', density' );
+statsTab.Properties.VariableNames = {'wave','areaPoly', 'n.active', 'n.inside', 'density'};
 
 % save table
 writetable(statsTab, [rootFilepath,'_hotMaps_alphaMS.csv'] )
@@ -167,4 +182,5 @@ catch  % use old version of pdf appending
     delete(fileNames{2:end});
 end
 
+close all
 end
