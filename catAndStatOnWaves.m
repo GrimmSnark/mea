@@ -178,7 +178,11 @@ for w = 1 : nWaves
     countSpikes = 0;
 
     % load spike struct
-    spkStruct = waveEx.spikeData.spikes;
+    try
+        spkStruct = waveEx.spikeData.spikes;
+    catch
+        spkStruct = waveEx.spikeData;
+    end
 
     for c = 1 : length(chsIdx)
        

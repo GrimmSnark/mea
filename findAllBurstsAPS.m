@@ -70,17 +70,33 @@ function [waveEx] = findAllBurstsAPS(file, varargin)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % deals with if you are starting from the .bxr or the spk file
-if strfind(file,'Spk')
+if strfind(file,'waveEx')
+    load(file);
+    ops = waveEx.ops;
+
+    try
+        spikeCh = waveEx.spikeData.spikes;
+    catch
+        spikeCh = waveEx.spikeData;
+    end
+
+    suffix = '';
+elseif strfind(file,'Spk')
     spikeCh = load(file);
     ops = retinaWavesDefaults;
     suffix = '_waveEx';
-else
-    load(file);
-    ops = waveEx.ops;
-    spikeCh = waveEx.spikeData.spikes;
-    suffix = '';
 end
 
+% if strfind(file,'Spk')
+%     spikeCh = load(file);
+%     ops = retinaWavesDefaults;
+%     suffix = '_waveEx';
+% else
+%     load(file);
+%     ops = waveEx.ops;
+%     spikeCh = waveEx.spikeData.spikes;
+%     suffix = '';
+% end
 
 % deal with varargin overrides
 if ~isempty(varargin)
