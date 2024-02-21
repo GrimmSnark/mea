@@ -1,136 +1,204 @@
-function ops = retinaWavesDefaults()
+function ops = retinaWavesDefaults(ops)
 % This function holds all the defaults for processing Brainwave data
 % Written by MA Savage 28102022
 
-%% findAllBursts
+if nargin < 1 || isempty(ops)
 
-% Threshold for the ISI Rank:
-% If the ISI rank drops below this value, then we may have a burst.
-ops.rthres = 0.75;
+    %% open variable GUI Flag
 
-% Threshold for the spike count
-ops.scthres = 0.05;
+    ops.OpenGUI = 1;
 
-% window size for spike rate calculation (sec)
-ops.spiketrate_window = 1;
+    %% findAllBursts
 
-%Scaling is how many sections we split the window up into. We go through the spikes by this increment.
-ops.scaling = 2;
+    % Threshold for the ISI Rank:
+    % If the ISI rank drops below this value, then we may have a burst.
+    ops.rthres = 0.75;
 
-% the APS array sampling frequency (Hz)
-ops.freq = 7062.1;
+    % Threshold for the spike count
+    ops.scthres = 0.05;
 
-% minimum  number of spikes required to accept a channel
-ops.minNSpikes = 10;
+    % window size for spike rate calculation (sec)
+    ops.spiketrate_window = 1;
 
-%% analyseWaves
+    %Scaling is how many sections we split the window up into. We go through the spikes by this increment.
+    ops.scaling = 2;
 
-% plot the burst data in this time window:
-% NEW: now also applies to movie and 36 waves plot
-ops.showtime = [0 1400];
+    % the APS array sampling frequency (Hz)
+    ops.freq = 7062.1;
 
-% save the figures as .ps files (1 = yes)
-ops.save_figs = 1;
+    % minimum  number of spikes required to accept a channel
+    ops.minNSpikes = 10;
 
-% save the data as mywaves.mat file (1 = yes)
-ops.save_data = 1;
+    %% analyseWaves
 
-% make a movie of the waves (1 = yes)
-ops.show_movie = 1;
+    % plot the burst data in this time window:
+    % NEW: now also applies to movie and 36 waves plot
+    ops.showtime = [0 1400];
 
-% do a raster plot of the wave bursts (1 = yes)
-ops.show_raster = 1;
+    % save the figures as .ps files (1 = yes)
+    ops.save_figs = 1;
 
-% show a panel of up to 36 successive waves (1 = yes)
-ops.show36 = 1;
+    % save the data as mywaves.mat file (1 = yes)
+    ops.save_data = 1;
 
-% smallest wave size to be shown in the 36-waves-plot
-ops.minwavesize = 10;
+    % make a movie of the waves (1 = yes)
+    ops.show_movie = 1;
 
-% compute some wave statistics and show them
-ops.do_stats = 1;
+    % do a raster plot of the wave bursts (1 = yes)
+    ops.show_raster = 1;
 
-% plot cumulative histograms for sizes/durations? (stats only)
-ops.cumhists = 1;
+    % show a panel of up to 36 successive waves (1 = yes)
+    ops.show36 = 1;
 
-% how many monte carlo steps for p-value estimate?
-% to get meningful results, this should be 1000 or so
-% keep it small to reduce runtime
-% 0 means the fits are not done at all
-ops.monte_carlo_steps = 000;
+    % smallest wave size to be shown in the 36-waves-plot
+    ops.minwavesize = 10;
 
-% Wave detection parameters
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % compute some wave statistics and show them
+    ops.do_stats = 1;
 
-% test if spike amplitudes satisfy quality criterium
-ops.testForGaussian = 0;
+    % plot cumulative histograms for sizes/durations? (stats only)
+    ops.cumhists = 1;
 
-% minimum number of spikes in a burst to include in analysis
-% increasing this gets rid of noisy channels where spurious bursts were detected
-ops.minNSpikes = 10;
+    % how many monte carlo steps for p-value estimate?
+    % to get meningful results, this should be 1000 or so
+    % keep it small to reduce runtime
+    % 0 means the fits are not done at all
+    ops.monte_carlo_steps = 000;
 
-% all the following parameters are now used for all data sets
-% but may have to be adjusted
+    % Wave detection parameters
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% the maximum variance allowed in the local centre of mass trajectory
-% P4 (Fig 2): 12
-% P9 (control_SpkTs_bursts.mat Fig 3): 5
-% P12 (Phase_00_SpkTs_bursts.mat Fg 3): 5
-% P5 (P05_AllPhases_Spikes_bursts.mat fig 3): 12
-ops.searchradius = 40; % 10 default
+    % test if spike amplitudes satisfy quality criterium
+    ops.testForGaussian = 0;
 
-% this is how many steps we look into the past to compute the centre of mass trajectories:
-% a good default is ~20 or more, but it should be increased if small waves are not split properly
-ops.nprev = 20;  % Fig 2 = 30
+    % minimum number of spikes in a burst to include in analysis
+    % increasing this gets rid of noisy channels where spurious bursts were detected
+    ops.minNSpikes = 10;
 
-% minimum and maximum burst durations
-% for this algorithm it is better to keep these short
-% then it's possible to step through the waves in small steps...
-%default values 2 (min) and 3 (max)
-ops.minburstdur = 2;
-ops.maxburstdur = 3;
+    % all the following parameters are now used for all data sets
+    % but may have to be adjusted
 
-%% catAndStatOnWaves
+    % the maximum variance allowed in the local centre of mass trajectory
+    % P4 (Fig 2): 12
+    % P9 (control_SpkTs_bursts.mat Fig 3): 5
+    % P12 (Phase_00_SpkTs_bursts.mat Fg 3): 5
+    % P5 (P05_AllPhases_Spikes_bursts.mat fig 3): 12
+    ops.searchradius = 40; % 10 default
 
-% The bin size in milliseconds used to calculate each Center of Activity (CA) point
-ops.binSize = 1500;
+    % this is how many steps we look into the past to compute the centre of mass trajectories:
+    % a good default is ~20 or more, but it should be increased if small waves are not split properly
+    ops.nprev = 20;  % Fig 2 = 30
 
-%  A value in the range (0 1] that specifies the time step between two seccussive CA as a fraction of the bin size
-ops.timeStep = 0.2;
+    % minimum and maximum burst durations
+    % for this algorithm it is better to keep these short
+    % then it's possible to step through the waves in small steps...
+    %default values 2 (min) and 3 (max)
+    ops.minburstdur = 2;
+    ops.maxburstdur = 3;
 
-% array side length in number of electrodes
-ops.aSide = 64;
-% array fundamental element length in microns
-ops.eSize = 84;
+    %% catAndStatOnWaves
 
-% whether true, the algo consider only the spikes whithin the wave range,
-% i.e. for each channel the spikes whithin the burst that has been detected
-% as part of the wave; otherwise for each channel also spikes out from the
-% bursts (but always within the absolute bound of the wave) will be
-% considered and the CAT can be quite different from how you see the wave
-% made up of only bursts
-ops.onlySpikesInWaveRanges = true;
+    % The bin size in milliseconds used to calculate each Center of Activity (CA) point
+    ops.binSize = 1500;
 
-% to identify inconsistent CA point (icap >= 1). The CAT will be truncated
-% where less than icap channels contribute to the trajectory
-ops.icap = 3;
+    %  A value in the range (0 1] that specifies the time step between two seccussive CA as a fraction of the bin size
+    ops.timeStep = 0.2;
 
-% whether true ICAP is based on the relative number of active channels for
-% each wave (value = icap/100*activeChs; icap ranges between 1 and 100)
-ops.icapAsPercentage = false;
+    % array side length in number of electrodes
+    ops.aSide = 64;
+    % array fundamental element length in microns
+    ops.eSize = 84;
 
-% if true CATs are numerated progressively, otherwise they will keep the
-% number of the waves to which are referred
-ops.progEnumeration = false;
+    % whether true, the algo consider only the spikes whithin the wave range,
+    % i.e. for each channel the spikes whithin the burst that has been detected
+    % as part of the wave; otherwise for each channel also spikes out from the
+    % bursts (but always within the absolute bound of the wave) will be
+    % considered and the CAT can be quite different from how you see the wave
+    % made up of only bursts
+    ops.onlySpikesInWaveRanges = true;
 
-% constraint on the min number of recruited channels and min CAT length
-ops.minNoRecruitChs = 5;
+    % to identify inconsistent CA point (icap >= 1). The CAT will be truncated
+    % where less than icap channels contribute to the trajectory
+    ops.icap = 3;
 
-% whether true minNoRecruitChs is based on the total number of active 
-% channels for the loaded experiment (value = minNoRecruitChs/100*activeChs
-% ; minNoRecruitChs ranges between 1 and 100)
-ops.mrcAsPercentage = false;
-ops.minCatLength = 5;
+    % whether true ICAP is based on the relative number of active channels for
+    % each wave (value = icap/100*activeChs; icap ranges between 1 and 100)
+    ops.icapAsPercentage = false;
+
+    % if true CATs are numerated progressively, otherwise they will keep the
+    % number of the waves to which are referred
+    ops.progEnumeration = false;
+
+    % constraint on the min number of recruited channels and min CAT length
+    ops.minNoRecruitChs = 5;
+
+    % whether true minNoRecruitChs is based on the total number of active
+    % channels for the loaded experiment (value = minNoRecruitChs/100*activeChs
+    % ; minNoRecruitChs ranges between 1 and 100)
+    ops.mrcAsPercentage = false;
+    ops.minCatLength = 5;
+
+end
+
+    %% GUI
+
+    if ops.OpenGUI == 1
+
+        % format fieldnames
+
+        fieldNames = [
+            {'Bursts.rthres'}, ...
+            {'Bursts.scthres'}, ...
+            {'Bursts.spiketrate_window'}, ...
+            {'Bursts.scaling'}, ...
+            {'Bursts.freq'}, ...
+            {'Bursts.minNSpikes'}, ...
+            {'Waves.showtime'}, ...
+            {'Waves.save_figs'}, ...
+            {'Waves.save_data'}, ...
+            {'Waves.show_movie'}, ...
+            {'Waves.show_raster'}, ...
+            {'Waves.show36'}, ...
+            {'Waves.minwavesize'}, ...
+            {'Waves.do_stats'}, ...
+            {'Waves.cumhists'}, ...
+            {'Waves.monte_carlo_steps'}, ...
+            {'Waves.testForGaussian'}, ...
+            {'Waves.searchradius'}, ...
+            {'Waves.nprev'}, ...
+            {'Waves.minburstdur'}, ...
+            {'Waves.maxburstdur'}, ...
+            {'cat&Stat.binSize'}, ...
+            {'cat&Stat.timeStep'}, ...
+            {'cat&Stat.aSide'}, ...
+            {'cat&Stat.eSize'}, ...
+            {'cat&Stat.onlySpikesInWaveRanges'}, ...
+            {'cat&Stat.icap'}, ...
+            {'cat&Stat.icapAsPercentage'}, ...
+            {'cat&Stat.progEnumeration'}, ...
+            {'cat&Stat.minNoRecruitChs'}, ...
+            {'cat&Stat.mrcAsPercentage'}, ...
+            {'cat&Stat.minCatLength'}, ...
+
+            ];
+
+        fieldNames = fieldNames';
 
 
+        defaultOptions = rmfield(ops,"OpenGUI");
+        defaultOptions = struct2cell(defaultOptions);
+        defaultOptions = cellfun(@num2str, defaultOptions, 'UniformOutput',false);
+
+        responseVars = inputdlgcol(fieldNames,'Select the variables for the wave scripts', 1, defaultOptions,'on', 3);
+
+
+        % overwrite the variables
+       responseVars = cat(1,'1', responseVars);
+       fieldsNames2Overwrite = fieldnames(ops);
+
+       for i = 1:numel(fieldsNames2Overwrite)
+           ops.(fieldsNames2Overwrite{i}) = str2num(responseVars{i});
+       end
+
+    end
 end

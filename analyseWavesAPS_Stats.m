@@ -120,6 +120,7 @@ rootFilepath = file(1:rootFilepathInd-1);
 % load in previous data
 bursts = waveEx.bursts;
 ops = waveEx.ops;
+ops = retinaWavesDefaults(ops);
 
 % electrode num
 elecs = bursts.testelecs;

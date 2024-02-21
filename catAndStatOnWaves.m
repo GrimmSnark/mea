@@ -92,6 +92,7 @@ end
 
 load(waveFile);
 ops = waveEx.ops;
+ops = retinaWavesDefaults(ops);
 waves = waveEx.waves;
 
 % deal with varargin overrides

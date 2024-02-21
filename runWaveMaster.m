@@ -10,7 +10,7 @@ function runWaveMaster(datFile, varargin)
 %
 %         varargin - can overwrite any input variable to the analysis files
 %                    with the 'parameter name', variable format
-%                    see also
+%                    see also retinaWavesDefaults
 %
 % Output: Will output all figures and store experiment data into a
 %         *Wave_Ex.mat structure in the location of the datFile

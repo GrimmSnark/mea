@@ -85,6 +85,15 @@ elseif strfind(file,'Spk')
     spikeCh = load(file);
     ops = retinaWavesDefaults;
     suffix = '_waveEx';
+<<<<<<< Updated upstream
+=======
+else
+    load(file);
+    ops = waveEx.ops;
+    ops = retinaWavesDefaults(ops);
+    spikeCh = waveEx.spikeData.spikes;
+    suffix = '';
+>>>>>>> Stashed changes
 end
 
 % if strfind(file,'Spk')
@@ -268,7 +277,7 @@ rows2Clean = find(meaArrMedian>activtyLim);
 
 if ~isempty(rows2Clean)
 
-    disp(['Removing electrode row(s): ' num2str(rows2Clean(:)) ' due to high noise, please check output!!!']);
+    disp(['Removing electrode row(s): ' num2str(rows2Clean) ' due to high noise, please check output!!!']);
 
     % find the indexes of the channels to delete
     channels2Keep = ~ismember(epos(:,2),rows2Clean);
