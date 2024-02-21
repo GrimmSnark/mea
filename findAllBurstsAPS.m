@@ -85,15 +85,13 @@ elseif strfind(file,'Spk')
     spikeCh = load(file);
     ops = retinaWavesDefaults;
     suffix = '_waveEx';
-<<<<<<< Updated upstream
-=======
+
 else
     load(file);
     ops = waveEx.ops;
     ops = retinaWavesDefaults(ops);
     spikeCh = waveEx.spikeData.spikes;
     suffix = '';
->>>>>>> Stashed changes
 end
 
 % if strfind(file,'Spk')
