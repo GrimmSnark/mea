@@ -49,11 +49,11 @@ if bxrFlag == 1
     waveStructFile = dir(fullfile(path, '*waveE*.mat'));
     waveFile = fullfile(waveStructFile.folder, waveStructFile.name);
 
-    findAllBurstsAPS(waveFile, varargin{:});
+    findAllBurstsAPS(waveFile, 0,varargin{:});
 else
 
     % otherwise use SpkTs.mat
-    findAllBurstsAPS(datFile, varargin{:});
+    findAllBurstsAPS(datFile, 0, varargin{:});
 end
 
 %% wave analysis
@@ -63,7 +63,7 @@ waveStructFile = dir(fullfile(path, '*waveE*.mat'));
 waveFile = fullfile(waveStructFile.folder, waveStructFile.name);
 
 % run analyse waves
-analyseWavesAPS_Stats(waveFile, varargin{:});
+analyseWavesAPS_Stats(waveFile, 0, varargin{:});
 
 
 %% catStat analysis
@@ -82,5 +82,5 @@ if ~isempty(varargin)
 end
 
 % run cat stats
-catAndStatOnWaves(waveFile, waveEx.ops.binSize, waveEx.ops.timeStep, varargin{:});
+catAndStatOnWaves(waveFile, waveEx.ops.binSize, waveEx.ops.timeStep,0 , varargin{:});
 end

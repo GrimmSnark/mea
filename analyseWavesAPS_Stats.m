@@ -6,7 +6,7 @@
 % Adpated into scripts which use retinaWavesDefault and can be more easily
 % run
 
-function analyseWavesAPS_Stats(file, varargin)
+function analyseWavesAPS_Stats(file, openGUIFlag, varargin)
 %
 % Parameters
 %%%%%%%%%%%%
@@ -77,6 +77,12 @@ function analyseWavesAPS_Stats(file, varargin)
 % minburstdur = 2;
 % maxburstdur = 3;
 
+
+%% deal with openGUI variable viewer
+ if nargin< 2 || isempty(openGUIFlag)
+     openGUIFlag = 1;
+ end
+
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 h1 = figure();
@@ -120,6 +126,8 @@ rootFilepath = file(1:rootFilepathInd-1);
 % load in previous data
 bursts = waveEx.bursts;
 ops = waveEx.ops;
+ops.OpenGUI = openGUIFlag;
+
 ops = retinaWavesDefaults(ops);
 
 % electrode num
@@ -711,7 +719,7 @@ if((ops.show_raster == 1 | ops.do_stats == 1) & ops.save_figs == 1)
     %   print(h1,'-dpng','-r150',[file,'_waves.png']);
 
     pause(0.001);
-    tightfig;
+%     tightfig;
     exportgraphics(h1,[rootFilepath,'_waves.eps'], "Resolution",300, 'ContentType','vector');
 
     % much faster way to save png

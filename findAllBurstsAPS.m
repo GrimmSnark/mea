@@ -21,7 +21,7 @@
 % run
 
 % function [rate, bursttime, burstend, burstdur, burstsize, testelecs, isbad, meanrate, wlen, wskip] = findAllBurstsAPS(file)
-function [waveEx] = findAllBurstsAPS(file, varargin)
+function [waveEx] = findAllBurstsAPS(file, openGUIFlag , varargin)
 %find all the bursts in the given spike files.
 %This function was rewritten to return the data so
 %that a single function call can produce output graphs from input spike
@@ -65,6 +65,12 @@ function [waveEx] = findAllBurstsAPS(file, varargin)
 % minimum  number of spikes required to accept a channel
 % minNSpikes = 10;
 
+
+%% deal with openGUI variable viewer
+ if nargin< 2 || isempty(openGUIFlag)
+     openGUIFlag = 1;
+ end
+
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % load & combine spike data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,6 +79,7 @@ function [waveEx] = findAllBurstsAPS(file, varargin)
 if strfind(file,'waveEx')
     load(file);
     ops = waveEx.ops;
+    ops.OpenGUI = openGUIFlag;
 
     try
         spikeCh = waveEx.spikeData.spikes;
@@ -85,13 +92,6 @@ elseif strfind(file,'Spk')
     spikeCh = load(file);
     ops = retinaWavesDefaults;
     suffix = '_waveEx';
-
-else
-    load(file);
-    ops = waveEx.ops;
-    ops = retinaWavesDefaults(ops);
-    spikeCh = waveEx.spikeData.spikes;
-    suffix = '';
 end
 
 % if strfind(file,'Spk')

@@ -1,4 +1,4 @@
-function catAndStatOnWaves( waveFile, binSize, timeStep, varargin)
+function catAndStatOnWaves( waveFile, binSize, timeStep, openGUIFlag, varargin)
 %
 % ATTENTION: see the FIX below
 %
@@ -80,6 +80,13 @@ function catAndStatOnWaves( waveFile, binSize, timeStep, varargin)
 % minCatLength = 5;
 
 
+%% deal with openGUI variable viewer
+ if nargin< 4 || isempty(openGUIFlag)
+     openGUIFlag = 1;
+ end
+
+%%
+
 if isempty(waveFile)
     [fileName filePath] = uigetfile('*.mat','Select the mat file containing waves');
     waveFile = strcat(filePath,fileName);
@@ -92,6 +99,7 @@ end
 
 load(waveFile);
 ops = waveEx.ops;
+ops.OpenGUI = openGUIFlag;
 ops = retinaWavesDefaults(ops);
 waves = waveEx.waves;
 
