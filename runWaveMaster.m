@@ -39,14 +39,14 @@ if contains(datFile,'.bxr')
 end
 
 % get path parts
-[path] = fileparts(datFile);
+[path, fileName] = fileparts(datFile);
 
 %% extract bursts
 % deal with .bxr or SpkTs.mat
 if bxrFlag == 1
 
     % get waveEx.mat file if calculated by readBrainWaveFile
-    waveStructFile = dir(fullfile(path, '*waveE*.mat'));
+    waveStructFile = dir(fullfile(path, [fileName '*waveE*.mat']));
     waveFile = fullfile(waveStructFile.folder, waveStructFile.name);
 
     findAllBurstsAPS(waveFile, 0,varargin{:});
@@ -59,7 +59,7 @@ end
 %% wave analysis
 
 % get wavefile after it is certain it is generated
-waveStructFile = dir(fullfile(path, '*waveE*.mat'));
+waveStructFile = dir(fullfile(path, [fileName '*waveE*.mat']));
 waveFile = fullfile(waveStructFile.folder, waveStructFile.name);
 
 % run analyse waves

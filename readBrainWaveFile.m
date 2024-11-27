@@ -10,36 +10,68 @@ function readBrainWaveFile(filePath)
 % Usage: readBrainWaveFile('C:\Data\mouse\mea\testData\P4_20Feb19\test2\P4_ret1_20Feb19.bxr');
 
 %% read in data
-% read in chan org
-% info = h5info(filePath);
-nCols =  h5read(filePath,'/3BRecInfo/3BMeaChip/NCols');
-nRows =  h5read(filePath,'/3BRecInfo/3BMeaChip/NRows');
-% layout = h5read(filePath,'/3BRecInfo/3BMeaChip/MeaType');
+% read in chan org for old biocam or new biocam (in FLAME)
 
-% read in frame num
-StartFrame = 0;
-StopFrame = h5read(filePath,'/3BRecInfo/3BRecVars/NRecFrames');
+try
+    %% try the old version of biocam data
 
-StartFrame = StartFrame + 1; % bump up to 1 indexing
-StopFrame = StopFrame + 1; % bump up to 1 indexing
+    % info = h5info(filePath);
+    nCols =  h5read(filePath,'/3BRecInfo/3BMeaChip/NCols');
+    nRows =  h5read(filePath,'/3BRecInfo/3BMeaChip/NRows');
+    % layout = h5read(filePath,'/3BRecInfo/3BMeaChip/MeaType');
 
-% read in sample freq
-SamplingFrequency = h5read(filePath, '/3BRecInfo/3BRecVars/SamplingRate');
+    % read in frame num
+    StartFrame = 0;
+    StopFrame = h5read(filePath,'/3BRecInfo/3BRecVars/NRecFrames');
 
-% SamplingFrequency = h5readatt(filePath, '/' ,'SamplingRate');
+    StartFrame = StartFrame + 1; % bump up to 1 indexing
+    StopFrame = StopFrame + 1; % bump up to 1 indexing
+
+    % read in sample freq
+    SamplingFrequency = h5read(filePath, '/3BRecInfo/3BRecVars/SamplingRate');
+
+    % SamplingFrequency = h5readatt(filePath, '/' ,'SamplingRate');
 
 
-% read in spike times (in frames)
-spikeT = h5read(filePath, '/3BResults/3BChEvents/SpikeTimes');
-spikeT = spikeT +1; % bump up to 1 indexing
+    % read in spike times (in frames)
+    spikeT = h5read(filePath, '/3BResults/3BChEvents/SpikeTimes');
+    spikeT = spikeT +1; % bump up to 1 indexing
 
-% spikeT = h5read(filePath, '/Well_A1/SpikeTimes');
+    % spikeT = h5read(filePath, '/Well_A1/SpikeTimes');
 
-% read in spike chan indexes
-spikeChData = h5read(filePath, '/3BResults/3BChEvents/SpikeChIDs');
+    % read in spike chan indexes
+    spikeChData = h5read(filePath, '/3BResults/3BChEvents/SpikeChIDs');
 
-% spikeChData = h5read(filePath, '/Well_A1/SpikeChIdxs');
+    % spikeChData = h5read(filePath, '/Well_A1/SpikeChIdxs');
 
+catch
+    %% then try the new version of the biocam
+
+    nCols =  sqrt(length(h5read(filePath, '/Well_A1/StoredChIdxs')));
+    nRows =  nCols;
+
+    % read in frame num
+    StartFrame = 0;
+    StopFrame = max(max(h5read(filePath,'/TOC')));
+
+    StartFrame = StartFrame + 1; % bump up to 1 indexing
+    StopFrame = StopFrame + 1; % bump up to 1 indexing
+
+    % read in sample freq
+
+    experimentSettings = jsondecode(h5read(filePath, '/ExperimentSettings'));
+    SamplingFrequency = experimentSettings.TimeConverter.FrameRate;
+
+
+    % read in spike times (in frames)
+    spikeT =h5read(filePath, '/Well_A1/SpikeTimes');
+    spikeT = spikeT +1; % bump up to 1 indexing
+
+    % read in spike chan indexes
+    spikeChData = h5read(filePath, '/Well_A1/SpikeChIdxs');
+
+
+end
 
 % read in default options
 ops = retinaWavesDefaults;
