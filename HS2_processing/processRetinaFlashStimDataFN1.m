@@ -3,7 +3,7 @@ function data = processRetinaFlashStimDataFN1(clusterFilepath)
 %% defaults
 
 zScoreLower = 1; % spks/s over entire recording
-spikeTotalLower = 100;
+spikeTotalLower = 50;
 
 %% get the appropriate paths
 filepathPrefix = extractBefore(clusterFilepath, '_cluster');
