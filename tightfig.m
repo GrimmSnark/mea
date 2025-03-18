@@ -12,11 +12,9 @@ function hfig = tightfig(hfig)
 %   instead.
 %
 %
-
     if nargin == 0
         hfig = gcf;
     end
-
     % There can be an issue with tightfig when the user has been modifying
     % the contnts manually, the code below is an attempt to resolve this,
     % but it has not yet been satisfactorily fixed
@@ -24,13 +22,15 @@ function hfig = tightfig(hfig)
     set(hfig, 'WindowStyle', 'normal');
     
     % 1 point is 0.3528 mm for future use
-
     % get all the axes handles note this will also fetch legends and
     % colorbars as well
     hax = findall(hfig, 'type', 'axes');
     % TODO: fix for modern matlab, colorbars and legends are no longer axes
     hcbar = findall(hfig, 'type', 'colorbar');
     hleg = findall(hfig, 'type', 'legend');
+    
+    % FIX: for SGTITLE:
+    hsgt = findall(hfig,'Type','subplottext');
     
     % get the original axes units, so we can change and reset these again
     % later
@@ -60,8 +60,7 @@ function hfig = tightfig(hfig)
         % colorbars do not have tightinset property
         for cbind = 1:numel(hcbar)
             %         fsize = cell2mat(get(hax, 'FontSize'));
-            %             [cbarpos, cbarti] = colorbarpos (hcbar);
-            [cbarpos, cbarti] = colorbarpos (hcbar(cbind));
+            [cbarpos, cbarti] = colorbarpos (hcbar);
             pos = [pos; cbarpos];
             ti = [ti; cbarti];
         end
@@ -80,6 +79,19 @@ function hfig = tightfig(hfig)
             pos = [pos; get(hleg, 'Position') ];
         end
         ti = [ti; repmat([0,0,0,0], numel(hleg), 1); ];
+    end
+    
+    % FIX: for SGTITLE:
+    if ~isempty(hsgt)
+        if iscell(hsgt.String)
+            noLines = length(hsgt.String);
+        else
+            noLines = 1;
+        end
+        set(hsgt,'LineWidth',eps,'Margin',eps)
+        cmextra_v = convlength((noLines*hsgt.FontSize+hsgt.Margin)/72,'in','m')*400;
+    else
+        cmextra_v=0;
     end
     
     % ensure very tiny border so outer box always appears
@@ -117,9 +129,9 @@ function hfig = tightfig(hfig)
     
     % we will also alter the height and width of the figure to just
     % encompass the topmost and rightmost axes and lables
-    figwidth = max(pos(:,1) + pos(:,3) + ti(:,3) - moveleft);
+    figwidth = max(pos(:,1) + pos(:,3) + ti(:,3) - moveleft)+10e-3;     % Fix that the last item is cut a little off
     
-    figheight = max(pos(:,2) + pos(:,4) + ti(:,4) - movedown);
+    figheight = max(pos(:,2) + pos(:,4) + ti(:,4) - movedown)+cmextra_v;
     
     % move all the axes
     for i = 1:numel(hax)
@@ -159,27 +171,21 @@ function hfig = tightfig(hfig)
     if ~iscell(origaxunits)
         origaxunits = {origaxunits};
     end
-
     for i = 1:numel(hax)
         set(hax(i), 'Units', origaxunits{i});
     end
-
     set(hfig, 'Units', origfigunits);
     
 %      set(hfig, 'WindowStyle', origwindowstyle);
      
 end
-
-
 function [pos, ti] = colorbarpos (hcbar)
-
     % 1 point is 0.3528 mm
     
     pos = hcbar.Position;
     ti = [0,0,0,0];
     
     if ~isempty (strfind (hcbar.Location, 'outside'))
-
         if strcmp (hcbar.AxisLocation, 'out')
             
             tlabels = hcbar.TickLabels;
@@ -203,14 +209,12 @@ function [pos, ti] = colorbarpos (hcbar)
                     % know the width of every character in the label, the
                     % fsize refers to the height of the font
                     ticklablespace_cm = (0.3528/10) * fsize * maxlabellen * 0.62;
-
                     ti(3) = ti(3) + ticklablespace_cm;
                     
                 case 'southoutside'
                     
                     % make exta space a little more than the font size/height
                     ticklablespace_cm = 1.1 * (0.3528/10) * fsize;
-
                     ti(2) = ti(2) + ticklablespace_cm;
                     
                 case 'westoutside'
@@ -221,7 +225,6 @@ function [pos, ti] = colorbarpos (hcbar)
                     % know the width of every character in the label, the
                     % fsize refers to the height of the font
                     ticklablespace_cm = (0.3528/10) * fsize * maxlabellen * 0.62;
-
                     ti(1) = ti(1) + ticklablespace_cm;
                     
             end
@@ -229,5 +232,4 @@ function [pos, ti] = colorbarpos (hcbar)
         end
         
     end
-
 end

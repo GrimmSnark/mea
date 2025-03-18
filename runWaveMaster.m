@@ -21,7 +21,7 @@ bxrFlag = 0; % flag for bxr file type
 %% read data
 
 % if the dataFile is empty, open file dialogue
-if isempty(datFile)
+if  nargin <1 || isempty(datFile)
     [file,path] = uigetfile;
 
     % if you did not select a file
