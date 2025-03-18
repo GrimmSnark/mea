@@ -22,8 +22,7 @@ bxrFlag = 0; % flag for bxr file type
 
 % if the dataFile is empty, open file dialogue
 if  nargin <1 || isempty(datFile)
-    [file,path] = uigetfile;
-
+    [file,path] = uigetfile( {'*.mat;*.bxr'});
     % if you did not select a file
     if file == 0
         error('User has not selected a file to process, please rerun and do so....')
