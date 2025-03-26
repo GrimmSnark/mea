@@ -80,9 +80,13 @@ end
 
 cellRasterFolder = extractBefore(clusterFilepath, '.');
 
-if ~exist([cellRasterFolder{:} '_cellPlots'])
-    mkdir([cellRasterFolder{:} '_cellPlots']);
+if ~exist([cellRasterFolder{:} '_PSTHPlots'])
+    mkdir([cellRasterFolder{:} '_PSTHPlots']);
 end
+
+% if ~exist([cellRasterFolder{:} '_cellPlots'])
+%     mkdir([cellRasterFolder{:} '_cellPlots']);
+% end
 
 binsize = 50; % ms
 numValidClusters = sum([data.channelNames{5,:}]>zScoreLower);
@@ -100,12 +104,16 @@ for i = 1:length(data.spiketimestamps)
             spikeTimes = data.spiketimestamps{i};
 
             disp(['Plotting ' num2str(count) ' of ' num2str(numValidClusters) ' (min ' num2str(zScoreLower) ' zScore)']);
-            plotRaster_PSTH_On_Off_Response(waveforms,spikeTimes, binsize, data.Sampling, stimOnPerBlock{3}, stimOffPerBlock{3}, 0.5, 1);
+            % plotRaster_PSTH_On_Off_Response(waveforms,spikeTimes, binsize, data.Sampling, stimOnPerBlock{3}, stimOffPerBlock{3}, 0.5, 1);
+            ax = plotAllRasterPSTHs_On_Off_Response(spikeTimes, binsize, data.Sampling, stimOnPerBlock, stimOffPerBlock, 0.5, 1);
+
 
             sgtitle(['Cluster ID: ' num2str(data.channelNames{4,i}) ' (Total spks number: ' num2str(data.channelNames{6, i}) ') ZScore ON/OFF: ' num2str(max(zScorePerClusterBlkON(i,:))) '/' num2str(max(abs(zScorePerClusterBlkOFF(i,:)))) ]);
+            subplotEvenAxes(ax, [0 1 0] , 7:12);
             tightfig;
 
-            saveName = sprintf('%s/cluster%04d.png',[cellRasterFolder{:} '_cellPlots'],i-1);
+            % saveName = sprintf('%s/cluster%04d.png',[cellRasterFolder{:} '_cellPlots'],i-1);
+            saveName = sprintf('%s/cluster%04d.png',[cellRasterFolder{:} '_PSTHPlots'],i-1);
             saveas(gcf, saveName );
             close
         end
