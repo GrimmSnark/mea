@@ -1,4 +1,4 @@
-function data = processRetinaFlashStimDataFN1(clusterFilepath)
+function data = processRetinaFlashStimDataFN1(clusterFilepath, prestimTime, stimTime)
 
 %% defaults
 
@@ -74,7 +74,8 @@ for i =1:length(stimOffBreaks)
 end
 
 %% get firing rate for prestim and on/off responses
-[zScorePerClusterBlkON, zScorePerClusterBlkOFF] = createZScores4FlashData(data, stimOnPerBlock, stimOffPerBlock);
+% [zScorePerClusterBlkON, zScorePerClusterBlkOFF] = createZScores4FlashData(data, stimOnPerBlock, stimOffPerBlock);
+[zScorePerClusterBlkON, zScorePerClusterBlkOFF] = createZScoreTrialFlashData(data, stimOnPerBlock, stimOffPerBlock, prestimTime, stimTime);
 
 %% start the plotting
 
@@ -89,13 +90,15 @@ end
 % end
 
 binsize = 50; % ms
-numValidClusters = sum([data.channelNames{5,:}]>zScoreLower);
+% numValidClusters = sum([data.channelNames{5,:}]>zScoreLower);
+numValidClusters = sum([data.channelNames{6,:}]>spikeTotalLower);
+
 set(0,'DefaultFigureVisible','off');
 count = 0;
 
 
 for i = 1:length(data.spiketimestamps)
-    if any(zScorePerClusterBlkON(i,:)  >zScoreLower) || any(abs(zScorePerClusterBlkOFF(i,:))  >zScoreLower)
+    % if any(zScorePerClusterBlkON(i,:)  >zScoreLower) || any(abs(zScorePerClusterBlkOFF(i,:))  >zScoreLower)
         if data.channelNames{6,i} >= spikeTotalLower
 
             count = count +1;
@@ -105,10 +108,10 @@ for i = 1:length(data.spiketimestamps)
 
             disp(['Plotting ' num2str(count) ' of ' num2str(numValidClusters) ' (min ' num2str(zScoreLower) ' zScore)']);
             % plotRaster_PSTH_On_Off_Response(waveforms,spikeTimes, binsize, data.Sampling, stimOnPerBlock{3}, stimOffPerBlock{3}, 0.5, 1);
-            ax = plotAllRasterPSTHs_On_Off_Response(spikeTimes, binsize, data.Sampling, stimOnPerBlock, stimOffPerBlock, 0.5, 1);
+            ax = plotAllRasterPSTHs_On_Off_Response(spikeTimes, binsize, data.Sampling, stimOnPerBlock(1:3), stimOffPerBlock(1:3), 0.5, stimTime);
 
 
-            sgtitle(['Cluster ID: ' num2str(data.channelNames{4,i}) ' (Total spks number: ' num2str(data.channelNames{6, i}) ') ZScore ON/OFF: ' num2str(max(zScorePerClusterBlkON(i,:))) '/' num2str(max(abs(zScorePerClusterBlkOFF(i,:)))) ]);
+            sgtitle(['Cluster ID: ' num2str(data.channelNames{4,i}) ' (Spks: ' num2str(data.channelNames{6, i}) ') ZScore ON/OFF: ' num2str(zScorePerClusterBlkON(i,:)) '/' num2str(zScorePerClusterBlkOFF(i,:)) ]);
             subplotEvenAxes(ax, [0 1 0] , 7:12);
             tightfig;
 
@@ -117,7 +120,7 @@ for i = 1:length(data.spiketimestamps)
             saveas(gcf, saveName );
             close
         end
-    end
+    % end
 end
 set(0,'DefaultFigureVisible','on');
 end
