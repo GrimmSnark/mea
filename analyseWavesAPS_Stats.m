@@ -299,7 +299,8 @@ while max(isfinite(nt)) == 1
             end
 
             % find the burst that introduces the smalles variance
-            [vsd n] = nanmin(distsdn);
+            % [vsd n] = nanmin(distsdn);
+            [vsd n] = min(distsdn, [],"omitnan");
             v = nt(n);
 
             % check if there is temporal overlap with previous burst
