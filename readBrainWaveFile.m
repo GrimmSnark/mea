@@ -84,31 +84,61 @@ ops.freq = SamplingFrequency;
 % create all the channels
 % run through all the colomns and rows
 
-for x =1:nRows
-    for y = 1: nCols
-        % get index from col/row
-        ind = sub2ind([nCols nRows], y, x);
+% for x =1:nRows
+%     for y = 1: nCols
+%         % get index from col/row
+%         ind = sub2ind([nCols nRows], y, x);
+% 
+%         % get any spike channel indexes
+%         % tic
+%         % chanIndxs = find(spikeChData==ind);
+%         % toc
+% 
+%         chanIndxs = ismember(spikeChData, ind);
+% 
+%         if ~any(chanIndxs)
+%             % if no spikes create an empty variable
+%             eval(sprintf('spikeCh.Ch%02d_%02d=chanIndxs;', x, y));
+%         else
+%             % get spike indexes for channel
+% 
+%             spikesForChan = spikeT(chanIndxs);
+% 
+%             spikeTrain = sparse(1,double(spikesForChan),1,1,StopFrame);
+% 
+%             eval(sprintf('spikeCh.Ch%02d_%02d=spikeTrain'';', x, y));
+%         end
+%     end
+% end
 
-        % get any spike channel indexes
-        chanIndxs = find(spikeChData==ind);
+chanCombs = combvec(1:nRows, 1:nCols);
+len2Iterate = length(chanCombs);
+parfor i = 1:len2Iterate
+    ind = sub2ind([nCols nRows], chanCombs(2,i), chanCombs(1,i));
+    chanIndxs = find(spikeChData==ind);
 
-        if isempty(chanIndxs)
+    if ~any(chanIndxs)
             % if no spikes create an empty variable
-            eval(sprintf('spikeCh.Ch%02d_%02d=chanIndxs;', x, y));
+           spikeTrains{i}=chanIndxs;
         else
             % get spike indexes for channel
             spikesForChan = spikeT(chanIndxs);
+            % spikeTrain{i} = sparse(double(1),double(spikesForChan),1,1,StopFrame);
+            spikeTrain{i} = sparse(double(spikesForChan),1,1,StopFrame,1);
 
-            % create sparse double vector for spike train (nFrames x 1)
-            spikeTrain = spalloc(StopFrame, 1, length(spikesForChan));
-
-            % fill indexes with ones for spike frame IDs
-            spikeTrain(spikesForChan) = 1;
-
-            eval(sprintf('spikeCh.Ch%02d_%02d=spikeTrain;', x, y));
-        end
     end
 end
+
+for x = 1:len2Iterate
+    % fix for if the  last channel (64 x 64) is empty
+    try
+        eval(sprintf('spikeCh.Ch%02d_%02d=spikeTrain{x};', chanCombs(1,x), chanCombs(2,x)));
+    catch
+        eval(sprintf('spikeCh.Ch%02d_%02d=[];', chanCombs(1,x), chanCombs(2,x)));
+    end
+
+end
+
 
 %% save stuff in the experiment object
 

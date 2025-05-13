@@ -121,7 +121,7 @@ if isempty(rootFilepathInd)
 end
 
 % get the root file name
-rootFilepath = file(1:rootFilepathInd-1);
+rootFilepath = file(1:rootFilepathInd(end)-1);
 
 % load in previous data
 bursts = waveEx.bursts;

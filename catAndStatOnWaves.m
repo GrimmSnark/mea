@@ -319,7 +319,7 @@ if isempty(rootFilepathInd)
 rootFilepathInd = strfind(filepathStruct, '_wave');
 end
 
-rootFilepath = waveFile(1:rootFilepathInd-1);
+rootFilepath = filepathStruct(1:rootFilepathInd(end)-1);
 
 overallHotMap = zeros(ops.aSide, ops.aSide);
 for t = 1 : length(waves.epos)
