@@ -5,7 +5,7 @@ function [zScorePerClusterBlkON, zScorePerClusterBlkOFF] = createZScoreTrialFlas
 binsize = 50; % ms
 fs = data.Sampling;
 
-%%
+%% Z Score
 % for each cluster
 for i = 1:length(data.spiketimestamps)
     spikeFrames = data.spiketimestamps{i};

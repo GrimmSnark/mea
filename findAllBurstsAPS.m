@@ -120,6 +120,12 @@ if ~isempty(varargin)
     end
 end
 
+% % Remove aretfacts which shows spike arose full chip due to noise
+% spikesUnrolled = [];
+% fieldNamesCh= fieldnames(spikeCh);
+% for xx = 1:length(fieldnames(spikeCh))
+% spikesUnrolled = [spikesUnrolled ;find(spikeCh.(fieldNamesCh{xx}))];
+% end
 
 c=1;
 elecs = [];
@@ -147,6 +153,64 @@ nochannels = c-1;
 rectime = max(maxt(elecs));
 ee = elecs;
 testelecs = ee;
+
+%%
+spikesOriginal = spikes;
+spikeTimesUnrolled = vertcat(spikes.times{:});
+% spikeLimit  = round(length(epos)*0.20); % 85% of all channels containing a spike
+spikeLimit = 200; % fuck knows?
+
+subplot(211);
+nbins = round(rectime * 500);
+[numSpikesPerBin, edgeBins] = histcounts(spikeTimesUnrolled,nbins);
+histogram('BinEdges',edgeBins, 'BinCounts',numSpikesPerBin);
+
+% a = sort(numSpikesPerBin', 1,"descend");
+
+bins2Remove = find(numSpikesPerBin>spikeLimit);
+
+% for yy = 1:length(spikes.times)
+%     for vv = 1:length(bins2Remove)
+%         spikes.times{yy}(spikes.times{yy}>= edgeBins(bins2Remove(vv)) & spikes.times{yy}<= edgeBins(bins2Remove(vv)+1))=[];
+%     end
+% end
+
+% Step 1: Extract to temporary cell array
+timesTemp = spikes.times;
+
+% Step 2: Use parfor on the temp array
+parfor yy = 1:length(timesTemp)
+    tempSpikes = timesTemp{yy};
+    for vv = 1:length(bins2Remove)
+        binStart = edgeBins(bins2Remove(vv));
+        binEnd = edgeBins(bins2Remove(vv)+1);
+        tempSpikes(tempSpikes >= binStart & tempSpikes <= binEnd) = [];
+    end
+    timesTemp{yy} = tempSpikes;
+end
+
+% Step 3: Assign back after the parfor loop
+spikes.times = timesTemp;
+
+
+subplot(212)
+nbins = round(rectime * 500);
+spikeTimesUnrolled = vertcat(spikes.times{:});
+[numSpikesPerBin, edgeBins] = histcounts(spikeTimesUnrolled,nbins);
+histogram('BinEdges',edgeBins, 'BinCounts',numSpikesPerBin);
+
+
+emptyChans = cellfun(@isempty, spikes.times);
+
+epos(emptyChans,:) = [];
+spikes.times(emptyChans) = [];
+nspikes(emptyChans) =[];
+maxt(emptyChans)=[];
+elecs(emptyChans)=[];
+ee = 1:length(elecs);
+testelecs = ee;
+
+
 
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
