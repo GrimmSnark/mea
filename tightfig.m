@@ -159,7 +159,7 @@ function hfig = tightfig(hfig)
     % change the size of the figure
     figpos = get(hfig, 'Position');
     
-    set(hfig, 'Position', [figpos(1), figpos(2), figwidth, figheight]);
+    set(hfig, 'Position', [figpos(1)+1, figpos(2)+1, figwidth, figheight]);
     
     % change the size of the paper
     set(hfig, 'PaperUnits','centimeters');

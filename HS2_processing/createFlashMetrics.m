@@ -18,6 +18,7 @@ parfor i = 1:length(data.spiketimestamps)
     %% ZScore
     [zScorePerClusterBlkON{i}, zScorePerClusterBlkOFF{i}] = stimAlignedZScore(spikeFrames, fs, stimON_Events, stimOFF_Events, preAlignTimeZScore, postAlignTimeZScore);
 
+    %% Median absolute divation?
     %% create trial based PSTHs
     warning('off','MATLAB:colon:operandsNotRealScalar'); % stops Warning: Colon operands must be real scalars. This warning will become an error in a future release.
     [trialPSTHs{i}, trialSpikeStruct{i}, binEdges{i}] = createTrialPSTHs(spikeFrames, fs, stimON_Events, stimOFF_Events, prestimTimePSTH, postStimTimePSTH);

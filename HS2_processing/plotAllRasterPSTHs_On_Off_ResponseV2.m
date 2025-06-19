@@ -2,7 +2,7 @@ function ax = plotAllRasterPSTHs_On_Off_ResponseV2(responseMetrics)
 
 titleText = [{'Scotopic'}, {'Mesotopic'}, {'Photopic'}];
 
-figH = figure('units','normalized','outerposition',[0 0 1 1]);
+figH = figure('units','normalized','outerposition',[0 0 1 1], 'Color','white', 'MenuBar','none');
 %% plot raster per trial
 
 for stimblk = 1:length(responseMetrics.trialSpikes)

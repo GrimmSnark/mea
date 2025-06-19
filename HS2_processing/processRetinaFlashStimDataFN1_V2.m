@@ -104,6 +104,8 @@ count = 0;
 for i = 1:length(respondingClusterIndxNum)
 
     curCl = respondingClusterIndxNum(i);
+    clusterID = curCl-1;
+
     count = count +1;
 
     disp(['On ' num2str(count) ' of ' num2str(length(respondingClusterIndxNum))]);
@@ -121,12 +123,16 @@ for i = 1:length(respondingClusterIndxNum)
 
     ax = plotAllRasterPSTHs_On_Off_ResponseV2(clusterResponses);
 
-    sgtitle(['Cluster ID: ' num2str(data.channelNames{4,curCl}) ' Spks: ' num2str(data.channelNames{6, curCl})]);
+    sgtitle(['Cluster ID: ' num2str(clusterID) ' Spks: ' num2str(data.channelNames{6, curCl})]);
     tightfig;
 
     % saveName = sprintf('%s/cluster%04d.png',[cellRasterFolder{:} '_cellPlots'],i-1);
-    saveName = sprintf('%s/cluster%04d.png',[cellRasterFolder{:} '_PSTHPlotsV2'],i-1);
-    saveas(gcf, saveName );
+    saveName = sprintf('%s\\cluster%04d.png',[cellRasterFolder{:} '_PSTHPlotsV2'],clusterID);
+
+    winHandle = gethwnd(gcf);
+    cmndstr = sprintf('%s','MiniCap.exe -save ','"',saveName,'"',...
+        ' -compress 9', ' -capturehwnd ', num2str(winHandle),' -exit');
+    system(cmndstr);
     close
 end
 % end
