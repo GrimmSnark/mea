@@ -75,12 +75,12 @@ stimOffStopBreaks = [ find(diffOff > blockLimit) ;length(diffOff)+1];
 
 for i =1:length(stimOffBreaks)
     stimOffPerBlock{i,:} = stimOffFrames(stimOffBreaks(i):stimOffStopBreaks(i));
-end
+end\
 
 %% make all the metrics we use to seperate out the cells
 responseMetrics = createFlashMetrics(data, stimOnPerBlock, stimOffPerBlock, prestimTimeZScore, stimTimeZScore, prestimTimePSTH, postStimTimePSTH);
 
-respondingClustersIndex = max(responseMetrics.responseQuality,[],2)>responseQualityThreshold;
+respondingClustersIndex = round(max(responseMetrics.responseQuality,[],2),2) >= responseQualityThreshold;
 respondingClusterIndxNum = find(respondingClustersIndex);
 
 %% start the plotting
